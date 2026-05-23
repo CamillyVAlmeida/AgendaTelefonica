@@ -1,0 +1,13 @@
+# =====================================================================
+# Modelo de configuracao de conexao com o MySQL.
+#
+# COMO USAR:
+#   1. Copie este arquivo para "db.properties" (mesma pasta).
+#   2. Substitua SUA_SENHA_AQUI pela senha do seu MySQL local.
+#   3. Salve. O arquivo db.properties NAO e versionado no Git
+#      (esta listado em .gitignore) para nao expor credenciais.
+# =====================================================================
+
+db.url=jdbc:mysql://localhost:3306/agenda_telefonica?useSSL=false&serverTimezone=UTC&allowPublicKeyRetrieval=true&useUnicode=true&characterEncoding=UTF-8
+db.user=root
+db.password=SUA_SENHA_AQUI
