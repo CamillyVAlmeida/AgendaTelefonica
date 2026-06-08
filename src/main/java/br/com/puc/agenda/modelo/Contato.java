@@ -63,7 +63,7 @@ public class Contato {
     @Override
     public String toString() {
         return String.format(
-                "[id=%d] %s | Telefone: %s | E-mail: %s",
-                id, nome, telefone, email);
+                "%s | Telefone: %s | E-mail: %s",
+                nome, telefone, email);
     }
 }

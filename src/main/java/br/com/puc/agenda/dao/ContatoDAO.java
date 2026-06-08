@@ -68,18 +68,20 @@ public class ContatoDAO {
     }
 
     /**
-     * Atualiza telefone e e-mail do contato identificado pelo nome.
+     * Atualiza nome, telefone e e-mail do contato identificado pelo id.
+     * O id e usado como chave para permitir, inclusive, a alteracao do nome.
      * Retorna true se algum registro foi alterado.
      */
     public boolean atualizar(Contato contato) throws SQLException {
-        String sql = "UPDATE contato SET telefone = ?, email = ? WHERE nome = ?";
+        String sql = "UPDATE contato SET nome = ?, telefone = ?, email = ? WHERE id = ?";
 
         try (Connection conn = ConexaoBD.obter();
              PreparedStatement ps = conn.prepareStatement(sql)) {
 
-            ps.setString(1, contato.getTelefone());
-            ps.setString(2, contato.getEmail());
-            ps.setString(3, contato.getNome());
+            ps.setString(1, contato.getNome());
+            ps.setString(2, contato.getTelefone());
+            ps.setString(3, contato.getEmail());
+            ps.setInt(4, contato.getId());
 
             return ps.executeUpdate() > 0;
         }

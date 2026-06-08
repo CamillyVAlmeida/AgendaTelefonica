@@ -5,6 +5,7 @@ import br.com.puc.agenda.modelo.Contato;
 import java.sql.SQLException;
 import java.util.List;
 import java.util.Scanner;
+import java.util.regex.Pattern;
 
 /**
  * Classe principal que oferece um menu interativo no console para o usuario
@@ -14,6 +15,11 @@ import java.util.Scanner;
  * contemplar tambem a operacao de Update exigida no objetivo geral (CRUD completo).
  */
 public class AgendaTeste {
+
+    private static final Pattern PADRAO_NOME = Pattern.compile("^[A-Za-z ]+$");
+    private static final Pattern PADRAO_TELEFONE = Pattern.compile("^\\(\\d{2}\\) 9 \\d{4}-\\d{4}$");
+    private static final Pattern PADRAO_EMAIL = Pattern.compile("^[A-Za-z0-9._@\\-]+$");
+    private static final String MENSAGEM_FORMATO_TELEFONE = "Telefone (formato (dd) 9 9999-9999): ";
 
     private static final Scanner SC = new Scanner(System.in);
     private static final AgendaTelefonica AGENDA = new AgendaTelefonica();
@@ -63,9 +69,19 @@ public class AgendaTeste {
 
     private static void adicionar() throws SQLException {
         System.out.println("\n>>> Adicionar novo contato");
-        String nome = lerTexto("Nome: ");
-        String telefone = lerTexto("Telefone: ");
+        String nome = lerTexto("Nome (apenas letras sem acento): ");
+        String telefone = lerTelefoneValido(MENSAGEM_FORMATO_TELEFONE);
         String email = lerTexto("E-mail: ");
+
+        if (!validarCamposObrigatorios(nome, telefone, email)) {
+            return;
+        }
+        if (!validarFormatoNome(nome)) {
+            return;
+        }
+        if (!validarFormatoEmail(email)) {
+            return;
+        }
 
         Contato existente = AGENDA.buscarContato(nome);
         if (existente != null) {
@@ -128,11 +144,46 @@ public class AgendaTeste {
         }
 
         System.out.println("Dados atuais: " + atual);
-        String novoTelefone = lerTexto("Novo telefone: ");
-        String novoEmail = lerTexto("Novo e-mail: ");
+        System.out.println("Qual dado deseja atualizar?");
+        System.out.println("1 - Nome");
+        System.out.println("2 - Telefone");
+        System.out.println("3 - E-mail");
+        int opcao = lerInteiro("Escolha uma opcao: ");
 
-        atual.setTelefone(novoTelefone);
-        atual.setEmail(novoEmail);
+        switch (opcao) {
+            case 1 -> {
+                String novoNome = lerTexto("Novo nome (apenas letras sem acento): ");
+                if (novoNome.isBlank()) {
+                    System.out.println("Nome e obrigatorio. Atualizacao cancelada.");
+                    return;
+                }
+                if (!validarFormatoNome(novoNome)) {
+                    return;
+                }
+                Contato existente = AGENDA.buscarContato(novoNome);
+                if (existente != null && existente.getId() != atual.getId()) {
+                    System.out.println("Ja existe um contato com esse nome. Atualizacao cancelada.");
+                    return;
+                }
+                atual.setNome(novoNome);
+            }
+            case 2 -> atual.setTelefone(lerTelefoneValido("Novo telefone (formato (dd) 9 9999-9999): "));
+            case 3 -> {
+                String novoEmail = lerTexto("Novo e-mail: ");
+                if (novoEmail.isBlank()) {
+                    System.out.println("E-mail e obrigatorio. Atualizacao cancelada.");
+                    return;
+                }
+                if (!validarFormatoEmail(novoEmail)) {
+                    return;
+                }
+                atual.setEmail(novoEmail);
+            }
+            default -> {
+                System.out.println("Opcao invalida. Atualizacao cancelada.");
+                return;
+            }
+        }
 
         boolean atualizado = AGENDA.atualizarContato(atual);
         if (atualizado) {
@@ -140,6 +191,49 @@ public class AgendaTeste {
         } else {
             System.out.println("Nao foi possivel atualizar o contato.");
         }
+    }
+
+    private static boolean validarCamposObrigatorios(String nome, String telefone, String email) {
+        if (nome.isBlank() || telefone.isBlank() || email.isBlank()) {
+            System.out.println("Nome, telefone e e-mail sao obrigatorios. Operacao cancelada.");
+            return false;
+        }
+        return true;
+    }
+
+    private static boolean validarFormatoNome(String nome) {
+        if (!PADRAO_NOME.matcher(nome).matches()) {
+            System.out.println(
+                    "Nome invalido. Use apenas letras de A a Z, sem acentos, numeros ou caracteres especiais.");
+            return false;
+        }
+        return true;
+    }
+
+    private static boolean validarFormatoTelefone(String telefone) {
+        if (!PADRAO_TELEFONE.matcher(telefone).matches()) {
+            System.out.println("Numero invalido. Use o formato (dd) 9 9999-9999. Exemplo: (31) 9 9876-5432.");
+            return false;
+        }
+        return true;
+    }
+
+    private static String lerTelefoneValido(String mensagem) {
+        while (true) {
+            String telefone = lerTexto(mensagem);
+            if (validarFormatoTelefone(telefone)) {
+                return telefone;
+            }
+            System.out.println("Tente novamente.");
+        }
+    }
+
+    private static boolean validarFormatoEmail(String email) {
+        if (!PADRAO_EMAIL.matcher(email).matches() || !email.contains("@")) {
+            System.out.println("E-mail invalido. Use apenas letras, digitos, ponto, hifen, underscore e @.");
+            return false;
+        }
+        return true;
     }
 
     private static String lerTexto(String mensagem) {
