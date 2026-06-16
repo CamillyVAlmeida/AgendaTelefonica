@@ -97,6 +97,17 @@ mvn clean compile
 mvn exec:java
 ```
 
+### 4.2 Via fat-jar (recomendado para a demonstracao em video)
+
+```powershell
+mvn clean package
+java -jar target\agenda-telefonica.jar
+```
+
+O `maven-shade-plugin` ja empacota o driver MySQL dentro do JAR, entao basta
+o JDK instalado para executar.
+
+
 ## 5. Menu da aplicacao
 
 ```
