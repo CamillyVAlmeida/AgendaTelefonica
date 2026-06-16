@@ -90,7 +90,7 @@ db.password=SUA_SENHA
 
 ## 4. Como executar
 
-### 4.1 Via Maven (recomendado durante o desenvolvimento)
+### 4.1 Via Maven
 
 ```powershell
 mvn clean compile
