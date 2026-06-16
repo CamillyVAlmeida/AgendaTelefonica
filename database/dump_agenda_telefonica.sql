@@ -44,7 +44,7 @@ CREATE TABLE `contato` (
   `email` varchar(150) NOT NULL,
   PRIMARY KEY (`id`),
   UNIQUE KEY `nome` (`nome`)
-) ENGINE=InnoDB AUTO_INCREMENT=9 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=19 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -54,14 +54,24 @@ CREATE TABLE `contato` (
 LOCK TABLES `contato` WRITE;
 /*!40000 ALTER TABLE `contato` DISABLE KEYS */;
 INSERT INTO `contato` (`id`, `nome`, `telefone`, `email`) VALUES
- (1, 'Ana Beatriz Souza',   '(31) 99876-1122', 'ana.souza@example.com'),
- (2, 'Bruno Oliveira',      '(11) 98765-4321', 'bruno.oliveira@example.com'),
- (3, 'Camilly Rodrigues',   '(31) 99123-4567', 'camilly.rodrigues@example.com'),
- (4, 'Daniel Pereira',      '(21) 99654-7788', 'daniel.pereira@example.com'),
- (5, 'Eduarda Lima',        '(31) 98877-6655', 'eduarda.lima@example.com'),
- (6, 'Felipe Martins',      '(11) 97766-5544', 'felipe.martins@example.com'),
- (7, 'Gabriela Almeida',    '(31) 99001-2233', 'gabriela.almeida@example.com'),
- (8, 'Henrique Costa',      '(85) 98899-7766', 'henrique.costa@example.com');
+ (1, 'Ana Beatriz Souza',   '(31) 9 9876-1122', 'ana.souza@example.com'),
+ (2, 'Bruno Oliveira',      '(11) 9 8765-4321', 'bruno.oliveira@example.com'),
+ (3, 'Camilly Rodrigues',   '(31) 9 9123-4567', 'camilly.rodrigues@example.com'),
+ (4, 'Daniel Pereira',      '(21) 9 9654-7788', 'daniel.pereira@example.com'),
+ (5, 'Eduarda Lima',        '(31) 9 8877-6655', 'eduarda.lima@example.com'),
+ (6, 'Felipe Martins',      '(11) 9 7766-5544', 'felipe.martins@example.com'),
+ (7, 'Gabriela Almeida',    '(31) 9 9001-2233', 'gabriela.almeida@example.com'),
+ (8, 'Henrique Costa',      '(85) 9 8899-7766', 'henrique.costa@example.com'),
+ (9, 'Isabela Fernandes',   '(31) 9 9345-6789', 'isabela.fernandes@example.com'),
+ (10, 'Joao Victor Lima',   '(11) 9 9234-5678', 'joao.victor@example.com'),
+ (11, 'Larissa Mendes',     '(21) 9 9456-7890', 'larissa.mendes@example.com'),
+ (12, 'Marcos Silva',       '(31) 9 9567-8901', 'marcos.silva@example.com'),
+ (13, 'Natalia Ribeiro',    '(47) 9 9678-9012', 'natalia.ribeiro@example.com'),
+ (14, 'Otavio Carvalho',    '(11) 9 9789-0123', 'otavio.carvalho@example.com'),
+ (15, 'Paula Nunes',        '(31) 9 9890-1234', 'paula.nunes@example.com'),
+ (16, 'Rafael Santos',      '(62) 9 9901-2345', 'rafael.santos@example.com'),
+ (17, 'Sofia Andrade',      '(85) 9 9012-3456', 'sofia.andrade@example.com'),
+ (18, 'Thiago Barbosa',     '(31) 9 9123-4560', 'thiago.barbosa@example.com');
 /*!40000 ALTER TABLE `contato` ENABLE KEYS */;
 UNLOCK TABLES;
 

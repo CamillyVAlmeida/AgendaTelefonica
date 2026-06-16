@@ -19,7 +19,10 @@ public class AgendaTeste {
     private static final Pattern PADRAO_NOME = Pattern.compile("^[A-Za-z ]+$");
     private static final Pattern PADRAO_TELEFONE = Pattern.compile("^\\(\\d{2}\\) 9 \\d{4}-\\d{4}$");
     private static final Pattern PADRAO_EMAIL = Pattern.compile("^[A-Za-z0-9._@\\-]+$");
+    private static final String MENSAGEM_FORMATO_NOME = "Nome (apenas letras sem acento): ";
     private static final String MENSAGEM_FORMATO_TELEFONE = "Telefone (formato (dd) 9 9999-9999): ";
+    private static final String MENSAGEM_FORMATO_EMAIL = "E-mail: ";
+    private static final String MENSAGEM_VOLTAR = "(0 para voltar ao menu)";
 
     private static final Scanner SC = new Scanner(System.in);
     private static final AgendaTelefonica AGENDA = new AgendaTelefonica();
@@ -69,17 +72,23 @@ public class AgendaTeste {
 
     private static void adicionar() throws SQLException {
         System.out.println("\n>>> Adicionar novo contato");
-        String nome = lerTexto("Nome (apenas letras sem acento): ");
-        String telefone = lerTelefoneValido(MENSAGEM_FORMATO_TELEFONE);
-        String email = lerTexto("E-mail: ");
+        String nome = lerNomeValido(MENSAGEM_FORMATO_NOME, true);
+        if (nome == null) {
+            voltarAoMenu();
+            return;
+        }
+        String telefone = lerTelefoneValido(MENSAGEM_FORMATO_TELEFONE, true);
+        if (telefone == null) {
+            voltarAoMenu();
+            return;
+        }
+        String email = lerEmailValido(MENSAGEM_FORMATO_EMAIL, true);
+        if (email == null) {
+            voltarAoMenu();
+            return;
+        }
 
         if (!validarCamposObrigatorios(nome, telefone, email)) {
-            return;
-        }
-        if (!validarFormatoNome(nome)) {
-            return;
-        }
-        if (!validarFormatoEmail(email)) {
             return;
         }
 
@@ -96,7 +105,11 @@ public class AgendaTeste {
 
     private static void remover() throws SQLException {
         System.out.println("\n>>> Remover contato");
-        String nome = lerTexto("Nome do contato a remover: ");
+        String nome = lerTexto("Nome do contato a remover: ", true);
+        if (nome == null) {
+            voltarAoMenu();
+            return;
+        }
 
         boolean removido = AGENDA.removerContato(nome);
         if (removido) {
@@ -108,7 +121,11 @@ public class AgendaTeste {
 
     private static void buscar() throws SQLException {
         System.out.println("\n>>> Buscar contato");
-        String nome = lerTexto("Nome do contato: ");
+        String nome = lerTexto("Nome do contato: ", true);
+        if (nome == null) {
+            voltarAoMenu();
+            return;
+        }
 
         Contato c = AGENDA.buscarContato(nome);
         if (c != null) {
@@ -135,7 +152,11 @@ public class AgendaTeste {
 
     private static void atualizar() throws SQLException {
         System.out.println("\n>>> Atualizar contato");
-        String nome = lerTexto("Nome do contato a atualizar: ");
+        String nome = lerTexto("Nome do contato a atualizar: ", true);
+        if (nome == null) {
+            voltarAoMenu();
+            return;
+        }
 
         Contato atual = AGENDA.buscarContato(nome);
         if (atual == null) {
@@ -148,16 +169,18 @@ public class AgendaTeste {
         System.out.println("1 - Nome");
         System.out.println("2 - Telefone");
         System.out.println("3 - E-mail");
+        System.out.println("0 - Voltar ao menu");
         int opcao = lerInteiro("Escolha uma opcao: ");
 
         switch (opcao) {
+            case 0 -> {
+                voltarAoMenu();
+                return;
+            }
             case 1 -> {
-                String novoNome = lerTexto("Novo nome (apenas letras sem acento): ");
-                if (novoNome.isBlank()) {
-                    System.out.println("Nome e obrigatorio. Atualizacao cancelada.");
-                    return;
-                }
-                if (!validarFormatoNome(novoNome)) {
+                String novoNome = lerNomeValido("Novo nome (apenas letras sem acento): ", true);
+                if (novoNome == null) {
+                    voltarAoMenu();
                     return;
                 }
                 Contato existente = AGENDA.buscarContato(novoNome);
@@ -167,14 +190,18 @@ public class AgendaTeste {
                 }
                 atual.setNome(novoNome);
             }
-            case 2 -> atual.setTelefone(lerTelefoneValido("Novo telefone (formato (dd) 9 9999-9999): "));
-            case 3 -> {
-                String novoEmail = lerTexto("Novo e-mail: ");
-                if (novoEmail.isBlank()) {
-                    System.out.println("E-mail e obrigatorio. Atualizacao cancelada.");
+            case 2 -> {
+                String novoTelefone = lerTelefoneValido("Novo telefone (formato (dd) 9 9999-9999): ", true);
+                if (novoTelefone == null) {
+                    voltarAoMenu();
                     return;
                 }
-                if (!validarFormatoEmail(novoEmail)) {
+                atual.setTelefone(novoTelefone);
+            }
+            case 3 -> {
+                String novoEmail = lerEmailValido("Novo e-mail: ", true);
+                if (novoEmail == null) {
+                    voltarAoMenu();
                     return;
                 }
                 atual.setEmail(novoEmail);
@@ -218,11 +245,48 @@ public class AgendaTeste {
         return true;
     }
 
-    private static String lerTelefoneValido(String mensagem) {
+    private static void voltarAoMenu() {
+        System.out.println("Operacao cancelada. Voltando ao menu...");
+    }
+
+    private static boolean desejaVoltar(String entrada) {
+        return "0".equals(entrada) || "voltar".equalsIgnoreCase(entrada);
+    }
+
+    private static String lerNomeValido(String mensagem, boolean permitirVoltar) {
         while (true) {
-            String telefone = lerTexto(mensagem);
+            String nome = lerTexto(mensagem, permitirVoltar);
+            if (nome == null) {
+                return null;
+            }
+            if (validarFormatoNome(nome)) {
+                return nome;
+            }
+            System.out.println("Tente novamente.");
+        }
+    }
+
+    private static String lerTelefoneValido(String mensagem, boolean permitirVoltar) {
+        while (true) {
+            String telefone = lerTexto(mensagem, permitirVoltar);
+            if (telefone == null) {
+                return null;
+            }
             if (validarFormatoTelefone(telefone)) {
                 return telefone;
+            }
+            System.out.println("Tente novamente.");
+        }
+    }
+
+    private static String lerEmailValido(String mensagem, boolean permitirVoltar) {
+        while (true) {
+            String email = lerTexto(mensagem, permitirVoltar);
+            if (email == null) {
+                return null;
+            }
+            if (validarFormatoEmail(email)) {
+                return email;
             }
             System.out.println("Tente novamente.");
         }
@@ -236,9 +300,16 @@ public class AgendaTeste {
         return true;
     }
 
-    private static String lerTexto(String mensagem) {
-        System.out.print(mensagem);
-        return SC.nextLine().trim();
+    private static String lerTexto(String mensagem, boolean permitirVoltar) {
+        System.out.println(mensagem);
+        if (permitirVoltar) {
+            System.out.println(MENSAGEM_VOLTAR);
+        }
+        String entrada = SC.nextLine().trim();
+        if (permitirVoltar && desejaVoltar(entrada)) {
+            return null;
+        }
+        return entrada;
     }
 
     private static int lerInteiro(String mensagem) {
