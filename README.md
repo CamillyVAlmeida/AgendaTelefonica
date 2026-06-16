@@ -90,7 +90,7 @@ db.password=SUA_SENHA
 
 ## 4. Como executar
 
-### 4.1 Via Maven (recomendado durante o desenvolvimento)
+### 4.1 Via Maven
 
 ```powershell
 mvn clean compile
@@ -107,7 +107,6 @@ java -jar target\agenda-telefonica.jar
 O `maven-shade-plugin` ja empacota o driver MySQL dentro do JAR, entao basta
 o JDK instalado para executar.
 
----
 
 ## 5. Menu da aplicacao
 
@@ -124,22 +123,6 @@ o JDK instalado para executar.
 5 - Atualizar contato
 6 - Sair
 ------------------------
-```
-
-> O enunciado lista 5 opcoes no item III, mas o objetivo geral (secao 1) exige
-> **CRUD completo**. Por isso o menu foi estendido para 6 opcoes, mantendo
-> integralmente as funcionalidades pedidas e acrescentando "Atualizar
-> contato" para cobrir o `U` do CRUD.
-
----
-
-## 6. Gerar um novo dump apos popular o banco
-
-Depois de inserir contatos via aplicacao, regere o dump para incluir no
-entregavel:
-
-```powershell
-mysqldump -u root -p --databases agenda_telefonica > database\dump_agenda_telefonica.sql
 ```
 
 ---
